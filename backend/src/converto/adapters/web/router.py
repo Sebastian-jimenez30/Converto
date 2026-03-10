@@ -5,12 +5,16 @@ from fastapi import APIRouter, HTTPException
 from converto.application.commands.create_conversion_job_command import CreateConversionJobCommand
 from converto.application.use_cases.create_conversion_job_use_case import CreateConversionJobUseCase
 from converto.application.use_cases.get_conversion_job_use_case import GetConversionJobUseCase
+from converto.application.use_cases.list_supported_formats_use_case import (
+    ListSupportedFormatsUseCase,
+)
 from converto.domain.entities.conversion_job import ConversionJob
 
 from .schemas import (
     ConversionJobResponse,
     CreateConversionJobRequest,
     HealthResponse,
+    SupportedFormatsResponse,
 )
 
 
@@ -32,6 +36,7 @@ def _to_response(job: ConversionJob) -> ConversionJobResponse:
 def build_router(
     create_job_use_case: CreateConversionJobUseCase,
     get_job_use_case: GetConversionJobUseCase,
+    list_formats_use_case: ListSupportedFormatsUseCase,
 ) -> APIRouter:
     router = APIRouter()
 
@@ -58,5 +63,12 @@ def build_router(
             raise HTTPException(status_code=404, detail="Job not found")
         return _to_response(job)
 
-    return router
+    @router.get(
+        "/v1/capabilities/formats",
+        response_model=SupportedFormatsResponse,
+        tags=["Capabilities"],
+    )
+    def list_formats() -> SupportedFormatsResponse:
+        return SupportedFormatsResponse(formats=list_formats_use_case.execute())
 
+    return router

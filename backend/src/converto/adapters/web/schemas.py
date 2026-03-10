@@ -28,3 +28,6 @@ class ConversionJobResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
+
+class SupportedFormatsResponse(BaseModel):
+    formats: dict[str, list[str]]

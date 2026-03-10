@@ -31,10 +31,10 @@ Estado actual:
 ## Frontend (Vue + Vite)
 - Cliente SPA ligero para carga de archivos, selección de formato y consulta de estado.
 - Consumirá endpoints del backend (`/v1/jobs` y futuros endpoints de upload/download).
+- Actualmente consulta `GET /v1/capabilities/formats` para poblar formatos disponibles.
 
 ## Principios de implementación
 - El dominio no depende de FastAPI, SQLAlchemy o Celery.
 - Los casos de uso dependen de puertos, no de implementaciones.
 - Los adaptadores conectan tecnologías concretas al núcleo.
 - Cambios de infraestructura deben impactar mínimo al dominio.
-

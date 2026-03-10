@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine
 
 from converto.adapters.db.base import Base
+from converto.adapters.catalog.static_conversion_catalog import StaticConversionCatalog
 from converto.adapters.queue.celery_job_dispatcher import CeleryJobDispatcher
 from converto.adapters.repositories.sqlalchemy_conversion_job_repository import (
     SqlAlchemyConversionJobRepository,
@@ -15,6 +16,9 @@ from converto.application.use_cases.create_conversion_job_use_case import (
     CreateConversionJobUseCase,
 )
 from converto.application.use_cases.get_conversion_job_use_case import GetConversionJobUseCase
+from converto.application.use_cases.list_supported_formats_use_case import (
+    ListSupportedFormatsUseCase,
+)
 from converto.config.settings import Settings
 
 
@@ -27,9 +31,11 @@ def create_app() -> FastAPI:
     celery_app.conf.broker_url = settings.celery_broker_url
     celery_app.conf.result_backend = settings.celery_result_backend
     dispatcher = CeleryJobDispatcher(celery_app)
+    catalog = StaticConversionCatalog()
 
     create_job_use_case = CreateConversionJobUseCase(repository, dispatcher)
     get_job_use_case = GetConversionJobUseCase(repository)
+    list_formats_use_case = ListSupportedFormatsUseCase(catalog)
 
     @asynccontextmanager
     async def lifespan(_: FastAPI):
@@ -50,7 +56,7 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    app.include_router(build_router(create_job_use_case, get_job_use_case))
+    app.include_router(build_router(create_job_use_case, get_job_use_case, list_formats_use_case))
 
     @app.get("/", tags=["System"])
     def root() -> dict[str, str]:
@@ -63,4 +69,3 @@ def _build_session_factory(database_url: str):
     from converto.adapters.db.session import build_session_factory
 
     return build_session_factory(database_url)
-
