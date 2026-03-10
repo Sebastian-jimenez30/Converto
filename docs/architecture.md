@@ -8,33 +8,42 @@ Estructura base en `backend/src/converto`:
 
 - `domain/`: entidades y contratos del dominio.
 - `application/`: casos de uso y puertos.
-- `adapters/`: implementaciones concretas (web, repositorios SQL, cola Celery, etc).
+- `adapters/`: implementaciones concretas (web, repositorios SQL, cola Celery, storage S3).
 
-Flujo de creación de job:
-1. Adaptador web (`POST /v1/jobs`) recibe request.
-2. Caso de uso `CreateConversionJobUseCase` valida y crea entidad.
-3. Repositorio (adaptador SQLAlchemy) persiste en Postgres.
-4. Puerto de despacho (adaptador Celery) encola procesamiento en worker.
+Flujo de conversion actual:
+1. Adaptador web (`POST /v1/jobs/upload`) recibe `multipart/form-data`.
+2. Caso de uso `CreateUploadConversionJobUseCase` valida archivo y formato destino.
+3. Adaptador de storage sube la fuente a MinIO.
+4. Repositorio SQLAlchemy persiste el job en Postgres con estado `queued`.
+5. Puerto de despacho Celery encola procesamiento en worker.
 
 ## Worker (Celery)
 Estructura base en `worker/src/converto_worker`:
 
 - `application/`: caso de uso de procesamiento.
-- `adapters/`: convertidor concreto.
+- `adapters/`: convertidor, acceso DB y storage.
 - `config/`: settings.
 - `tasks.py`: entrypoint de tareas Celery.
 
-Estado actual:
-- Se implementó un convertidor mock para validar el flujo asíncrono.
-- El siguiente paso es integrar convertidores reales por tipo de archivo.
+Flujo actual:
+1. Lee job por `job_id` desde Postgres.
+2. Actualiza estado a `processing`.
+3. Descarga archivo fuente de MinIO.
+4. Ejecuta convertidor (actualmente placeholder: conserva bytes).
+5. Sube resultado a `outputs/...` en MinIO.
+6. Actualiza estado a `done` o `failed`.
 
 ## Frontend (Vue + Vite)
-- Cliente SPA ligero para carga de archivos, selección de formato y consulta de estado.
-- Consumirá endpoints del backend (`/v1/jobs` y futuros endpoints de upload/download).
-- Actualmente consulta `GET /v1/capabilities/formats` para poblar formatos disponibles.
+- Cliente SPA para subir archivos, elegir formato y consultar estado.
+- Consume:
+  - `GET /v1/capabilities/formats`
+  - `POST /v1/jobs/upload`
+  - `GET /v1/jobs/{job_id}`
+  - `GET /v1/jobs/{job_id}/download`
 
-## Principios de implementación
+## Principios
 - El dominio no depende de FastAPI, SQLAlchemy o Celery.
 - Los casos de uso dependen de puertos, no de implementaciones.
-- Los adaptadores conectan tecnologías concretas al núcleo.
-- Cambios de infraestructura deben impactar mínimo al dominio.
+- Los adaptadores conectan tecnologias concretas al nucleo.
+- Cambios de infraestructura deben impactar minimo al dominio.
+

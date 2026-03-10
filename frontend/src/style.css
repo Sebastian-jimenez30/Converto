@@ -70,8 +70,27 @@ button {
 }
 
 button {
+  background: #0d4fcc;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+button:disabled {
   background: #e8eef8;
   color: var(--muted);
+  cursor: not-allowed;
+}
+
+.error-text {
+  color: #a61414;
+  margin-top: 12px;
+}
+
+.download-link {
+  display: inline-block;
+  margin-top: 6px;
+  color: #0d4fcc;
+  font-weight: 600;
 }
 
 @media (max-width: 768px) {
@@ -83,4 +102,3 @@ button {
     padding: 16px;
   }
 }
-

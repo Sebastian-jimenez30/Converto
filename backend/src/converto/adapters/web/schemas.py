@@ -31,3 +31,7 @@ class ConversionJobResponse(BaseModel):
 
 class SupportedFormatsResponse(BaseModel):
     formats: dict[str, list[str]]
+
+
+class DownloadUrlResponse(BaseModel):
+    url: str

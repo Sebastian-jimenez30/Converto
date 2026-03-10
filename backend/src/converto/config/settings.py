@@ -14,7 +14,8 @@ class Settings(BaseSettings):
     s3_secret_key: str = "minioadmin"
     s3_bucket: str = "converto-files"
     s3_region: str = "us-east-1"
+    s3_public_endpoint: str = "http://localhost:9000"
+    max_upload_mb: int = 25
 
     celery_broker_url: str = "redis://localhost:6379/1"
     celery_result_backend: str = "redis://localhost:6379/2"
-

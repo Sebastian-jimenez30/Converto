@@ -1,6 +1,6 @@
 # Converto
 
-Converto es una aplicación web para convertir archivos con una arquitectura hexagonal.
+Converto es una aplicacion web para convertir archivos con arquitectura hexagonal.
 
 ## Stack
 - Frontend: Vue 3 + Vite + TypeScript
@@ -9,9 +9,9 @@ Converto es una aplicación web para convertir archivos con una arquitectura hex
 - DB: PostgreSQL
 - Cola: Redis
 - Storage: MinIO (S3 compatible)
-- Orquestación local: Docker Compose
+- Orquestacion local: Docker Compose
 
-## Estructura del repositorio
+## Estructura
 ```text
 .
 ├─ frontend/
@@ -22,46 +22,46 @@ Converto es una aplicación web para convertir archivos con una arquitectura hex
 └─ docs/
 ```
 
-## Arquitectura (alto nivel)
-- `frontend` es el cliente web.
-- `backend` expone API HTTP y orquesta casos de uso.
-- `worker` procesa trabajos asíncronos.
+## Arquitectura
+- `frontend` consume la API.
+- `backend` orquesta casos de uso y crea jobs.
+- `worker` procesa conversiones asincronas.
 - `postgres` guarda metadata de jobs.
-- `redis` sirve como broker/backend para Celery.
-- `minio` almacena archivos de entrada y salida.
+- `redis` actua como broker/result backend de Celery.
+- `minio` guarda archivos fuente y resultado.
 
-Más detalle: [Arquitectura Hexagonal](./docs/architecture.md)
+Detalle: [Arquitectura Hexagonal](./docs/architecture.md)
 
-## Estrategia de ramas
-- `main`: producción.
-- `staging`: integración y pruebas previas.
-- Ramas cortas: `feature/*`, `bugfix/*`, `chore/*`.
-- Flujo:
-  1. Crear rama desde `staging`.
-  2. PR hacia `staging`.
-  3. Validar en `staging`.
-  4. PR `staging -> main` para release.
-
-Más detalle: [GitHub Workflow](./docs/github-workflow.md)
+## Flujo de ramas actual
+Para este equipo (tu y yo), el flujo operativo es simple:
+1. Crear rama `feature/*` desde la base actual.
+2. Hacer commits y `git push` directo de la rama.
+3. Integrar por merge directo cuando la feature este validada.
 
 ## Arranque local
-1. Copiar variables:
+1. Crear `.env` opcional si quieres customizar variables:
    ```bash
    cp .env.example .env
    ```
 2. Levantar stack:
    ```bash
-   docker compose up --build
+   docker compose --env-file .env.example up --build
    ```
-3. URLs:
+
+## URLs
 - Frontend: http://localhost:5173
 - API: http://localhost:8000
 - Swagger: http://localhost:8000/docs
-- MinIO console: http://localhost:9001
+- MinIO Console: http://localhost:9001
+
+## Endpoints MVP
+- `GET /v1/capabilities/formats`
+- `POST /v1/jobs/upload` (multipart: `file`, `target_format`)
+- `GET /v1/jobs/{job_id}`
+- `GET /v1/jobs/{job_id}/download`
 
 ## Estado actual
-- Base inicial del monorepo y servicios creada.
-- Backend y worker ya separados por capas hexagonales.
-- Templates de GitHub y CI incluidos.
-- Falta implementar conversión real de formatos (por ahora worker mock).
+- Pipeline end-to-end de upload y procesamiento habilitado.
+- Worker actual usa convertidor placeholder (mantiene bytes), pero el flujo real de estados y storage ya funciona.
+- Siguiente paso: conversiones reales por tipo (imagenes, documentos, audio/video).
 

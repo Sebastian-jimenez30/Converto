@@ -1,27 +1,23 @@
 # GitHub Workflow
 
 ## Modelo de ramas
-- `main`: rama estable de producción.
-- `staging`: rama de integración y validación.
+- `main`: rama estable de produccion.
+- `staging`: rama de validacion previa cuando la necesitemos.
 - `feature/*`: nuevas funcionalidades.
 - `bugfix/*`: correcciones.
-- `chore/*`: tareas técnicas e infraestructura.
+- `chore/*`: tareas tecnicas e infraestructura.
 
-## Flujo de trabajo
-1. Crear rama de trabajo desde `staging`.
-2. Desarrollar y abrir PR hacia `staging`.
-3. Ejecutar CI y pruebas funcionales en `staging`.
-4. Cuando `staging` esté estable, abrir PR de `staging` hacia `main`.
-5. Hacer release desde `main` (tag recomendado).
+## Flujo operativo actual
+Como solo estamos desarrollando tu y yo:
+1. Crear rama (`feature/*`, `bugfix/*`, `chore/*`).
+2. Desarrollar y validar localmente.
+3. Hacer `git push` directo de la rama.
+4. Integrar por merge directo cuando este aprobada.
 
-## Reglas recomendadas en GitHub
-- Protección de `main` y `staging`.
-- Merge vía Pull Request únicamente.
-- 1 aprobación mínima por PR.
-- Checks obligatorios de CI.
-- Squash merge para historial limpio.
+Nota:
+- Podemos volver a flujo formal con PR a `staging` en cualquier momento.
 
-## Convención de commits
+## Convencion de commits
 Usar Conventional Commits:
 - `feat:`
 - `fix:`

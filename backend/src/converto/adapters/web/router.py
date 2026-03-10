@@ -1,18 +1,28 @@
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 
 from converto.application.commands.create_conversion_job_command import CreateConversionJobCommand
+from converto.application.commands.create_upload_conversion_job_command import (
+    CreateUploadConversionJobCommand,
+)
 from converto.application.use_cases.create_conversion_job_use_case import CreateConversionJobUseCase
+from converto.application.use_cases.create_upload_conversion_job_use_case import (
+    CreateUploadConversionJobUseCase,
+)
+from converto.application.use_cases.generate_download_url_use_case import (
+    GenerateDownloadUrlUseCase,
+)
 from converto.application.use_cases.get_conversion_job_use_case import GetConversionJobUseCase
 from converto.application.use_cases.list_supported_formats_use_case import (
     ListSupportedFormatsUseCase,
 )
-from converto.domain.entities.conversion_job import ConversionJob
+from converto.domain.entities.conversion_job import ConversionJob, JobStatus
 
 from .schemas import (
     ConversionJobResponse,
     CreateConversionJobRequest,
+    DownloadUrlResponse,
     HealthResponse,
     SupportedFormatsResponse,
 )
@@ -35,8 +45,10 @@ def _to_response(job: ConversionJob) -> ConversionJobResponse:
 
 def build_router(
     create_job_use_case: CreateConversionJobUseCase,
+    create_upload_job_use_case: CreateUploadConversionJobUseCase,
     get_job_use_case: GetConversionJobUseCase,
     list_formats_use_case: ListSupportedFormatsUseCase,
+    generate_download_url_use_case: GenerateDownloadUrlUseCase,
 ) -> APIRouter:
     router = APIRouter()
 
@@ -56,12 +68,44 @@ def build_router(
         )
         return _to_response(created)
 
+    @router.post("/v1/jobs/upload", response_model=ConversionJobResponse, tags=["Jobs"])
+    async def upload_job(
+        file: UploadFile = File(...),
+        target_format: str = Form(...),
+    ) -> ConversionJobResponse:
+        file_bytes = await file.read()
+        try:
+            created = create_upload_job_use_case.execute(
+                CreateUploadConversionJobCommand(
+                    source_filename=file.filename or "upload.bin",
+                    target_format=target_format,
+                    file_bytes=file_bytes,
+                    content_type=file.content_type,
+                )
+            )
+            return _to_response(created)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        finally:
+            await file.close()
+
     @router.get("/v1/jobs/{job_id}", response_model=ConversionJobResponse, tags=["Jobs"])
     def get_job(job_id: UUID) -> ConversionJobResponse:
         job = get_job_use_case.execute(job_id)
         if job is None:
             raise HTTPException(status_code=404, detail="Job not found")
         return _to_response(job)
+
+    @router.get("/v1/jobs/{job_id}/download", response_model=DownloadUrlResponse, tags=["Jobs"])
+    def get_job_download_url(job_id: UUID) -> DownloadUrlResponse:
+        job = get_job_use_case.execute(job_id)
+        if job is None:
+            raise HTTPException(status_code=404, detail="Job not found")
+        if job.status != JobStatus.DONE or not job.result_key:
+            raise HTTPException(status_code=409, detail="Job result is not ready yet")
+
+        url = generate_download_url_use_case.execute(job.result_key)
+        return DownloadUrlResponse(url=url)
 
     @router.get(
         "/v1/capabilities/formats",
