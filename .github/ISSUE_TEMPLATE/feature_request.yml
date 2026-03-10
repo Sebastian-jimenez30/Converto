@@ -1,0 +1,51 @@
+name: Feature Request
+description: Propuesta de nueva funcionalidad.
+title: "[FEATURE] "
+labels: ["type:feature"]
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: Resumen de la funcionalidad
+      placeholder: Qué queremos construir
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema a resolver
+      description: Qué necesidad de negocio/usuario cubre.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Propuesta de solución
+      description: Describe comportamiento esperado, UX y API si aplica.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Criterios de aceptación
+      placeholder: |
+        - [ ] Criterio 1
+        - [ ] Criterio 2
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Prioridad
+      options:
+        - p1 - urgente
+        - p2 - alta
+        - p3 - normal
+        - p4 - baja
+    validations:
+      required: true
+

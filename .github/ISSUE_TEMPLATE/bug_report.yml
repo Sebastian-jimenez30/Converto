@@ -1,0 +1,66 @@
+name: Bug Report
+description: Reportar un fallo en la aplicación o infraestructura.
+title: "[BUG] "
+labels: ["type:bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por reportar. Incluye pasos claros para reproducir.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Resumen
+      placeholder: Qué está fallando en una frase
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Pasos para reproducir
+      placeholder: |
+        1. Ir a...
+        2. Subir archivo...
+        3. Ver error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Resultado esperado
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs o evidencia
+      description: Pega logs, stacktrace o screenshots.
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Prioridad
+      options:
+        - p1 - urgente
+        - p2 - alta
+        - p3 - normal
+        - p4 - baja
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área afectada
+      options:
+        - frontend
+        - backend
+        - worker
+        - infraestructura
+    validations:
+      required: true
+

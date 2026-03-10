@@ -1,0 +1,51 @@
+name: Technical Task
+description: Tarea técnica de soporte (infra, refactor, deuda técnica, CI/CD).
+title: "[TECH] "
+labels: ["type:chore"]
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: Resumen
+      placeholder: Qué tarea técnica se realizará
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexto técnico
+      description: Por qué se necesita esta tarea.
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Alcance
+      description: Qué incluye y qué no incluye.
+    validations:
+      required: true
+
+  - type: textarea
+    id: done
+    attributes:
+      label: Definición de terminado
+      placeholder: |
+        - [ ] Entregable 1
+        - [ ] Entregable 2
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área principal
+      options:
+        - arquitectura
+        - devops
+        - seguridad
+        - calidad
+    validations:
+      required: true
+

@@ -1,0 +1,6 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Pregunta técnica general
+    url: https://github.com/Sebastian-jimenez30/Converto/discussions
+    about: Usa Discussions para preguntas que no son bugs ni tareas.
+
