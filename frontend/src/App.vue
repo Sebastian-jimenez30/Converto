@@ -271,6 +271,9 @@ onBeforeUnmount(clearPolling);
         <p class="muted">
           Upload one file, choose target format, and launch processing.
         </p>
+        <p class="beta-note">
+          Current beta: only same-format processing is enabled (e.g., PDF to PDF).
+        </p>
 
         <div
           class="dropzone"
@@ -357,4 +360,3 @@ onBeforeUnmount(clearPolling);
     </section>
   </main>
 </template>
-

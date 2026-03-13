@@ -36,6 +36,7 @@ class CreateUploadConversionJobUseCase:
         source_format = self._extract_extension(source_filename)
         target_format = command.target_format.strip().lower()
         self._validate_target_format(target_format)
+        self._validate_conversion_pair(source_format, target_format)
 
         job = ConversionJob.create(
             source_filename=source_filename,
@@ -63,6 +64,14 @@ class CreateUploadConversionJobUseCase:
             raise ValueError(f"Unsupported target format: {target_format}")
 
     @staticmethod
+    def _validate_conversion_pair(source_format: str, target_format: str) -> None:
+        if source_format != target_format:
+            raise ValueError(
+                "Real conversion between different formats is not enabled yet. "
+                "For now, choose the same source and target format."
+            )
+
+    @staticmethod
     def _sanitize_filename(filename: str) -> str:
         base_name = Path(filename).name.strip()
         if not base_name:
@@ -78,4 +87,3 @@ class CreateUploadConversionJobUseCase:
         if not extension:
             raise ValueError("Could not determine source format")
         return extension
-

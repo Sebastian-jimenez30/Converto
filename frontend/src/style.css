@@ -220,6 +220,12 @@ a {
   line-height: 1.5;
 }
 
+.beta-note {
+  margin: -8px 0 14px;
+  color: #ffd49d;
+  font-size: 0.86rem;
+}
+
 .dropzone {
   border: 1.5px dashed rgba(147, 174, 245, 0.58);
   border-radius: 18px;
@@ -543,4 +549,3 @@ a {
     grid-template-columns: 1fr;
   }
 }
-
