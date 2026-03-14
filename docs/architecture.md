@@ -29,7 +29,10 @@ Flujo actual:
 1. Lee job por `job_id` desde Postgres.
 2. Actualiza estado a `processing`.
 3. Descarga archivo fuente de MinIO.
-4. Ejecuta convertidor (actualmente placeholder: conserva bytes).
+4. Ejecuta convertidor multi-motor:
+   - LibreOffice para formatos de ofimatica.
+   - FFmpeg para audio/video.
+   - Pillow para imagenes.
 5. Sube resultado a `outputs/...` en MinIO.
 6. Actualiza estado a `done` o `failed`.
 
@@ -46,4 +49,3 @@ Flujo actual:
 - Los casos de uso dependen de puertos, no de implementaciones.
 - Los adaptadores conectan tecnologias concretas al nucleo.
 - Cambios de infraestructura deben impactar minimo al dominio.
-

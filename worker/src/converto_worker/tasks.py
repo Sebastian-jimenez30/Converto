@@ -1,4 +1,5 @@
 from uuid import UUID
+import mimetypes
 
 from converto_worker.adapters.db.models import ConversionJobModel
 from converto_worker.bootstrap import celery_app, process_conversion_use_case, s3_storage, session_factory
@@ -26,7 +27,12 @@ def process_conversion(job_id: str) -> dict[str, str]:
             )
 
             output_key = f"outputs/{job.id}/result.{job.target_format}"
-            s3_storage.upload_bytes(output_key, converted_bytes, content_type="application/octet-stream")
+            output_mime, _ = mimetypes.guess_type(output_key)
+            s3_storage.upload_bytes(
+                output_key,
+                converted_bytes,
+                content_type=output_mime or "application/octet-stream",
+            )
 
             job.status = "done"
             job.result_key = output_key

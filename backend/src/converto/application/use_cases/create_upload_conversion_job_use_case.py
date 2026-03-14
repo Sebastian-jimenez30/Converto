@@ -12,6 +12,38 @@ from converto.domain.repositories.conversion_job_repository import ConversionJob
 
 
 class CreateUploadConversionJobUseCase:
+    IMAGE_FORMATS = {"jpg", "jpeg", "png", "webp", "bmp", "tiff", "gif"}
+    OFFICE_FORMATS = {
+        "pdf",
+        "doc",
+        "docx",
+        "odt",
+        "rtf",
+        "txt",
+        "html",
+        "xls",
+        "xlsx",
+        "ods",
+        "ppt",
+        "pptx",
+        "odp",
+    }
+    AV_FORMATS = {
+        "mp3",
+        "wav",
+        "m4a",
+        "aac",
+        "ogg",
+        "flac",
+        "wma",
+        "mpa",
+        "mp4",
+        "mov",
+        "mkv",
+        "webm",
+        "avi",
+    }
+
     def __init__(
         self,
         repository: ConversionJobRepository,
@@ -63,13 +95,16 @@ class CreateUploadConversionJobUseCase:
         if target_format not in supported:
             raise ValueError(f"Unsupported target format: {target_format}")
 
-    @staticmethod
-    def _validate_conversion_pair(source_format: str, target_format: str) -> None:
-        if source_format != target_format:
-            raise ValueError(
-                "Real conversion between different formats is not enabled yet. "
-                "For now, choose the same source and target format."
-            )
+    def _validate_conversion_pair(self, source_format: str, target_format: str) -> None:
+        if source_format == target_format:
+            return
+        if source_format in self.IMAGE_FORMATS and target_format in self.IMAGE_FORMATS.union({"pdf"}):
+            return
+        if source_format in self.OFFICE_FORMATS and target_format in self.OFFICE_FORMATS:
+            return
+        if source_format in self.AV_FORMATS and target_format in self.AV_FORMATS:
+            return
+        raise ValueError(f"Unsupported conversion pair: {source_format} -> {target_format}")
 
     @staticmethod
     def _sanitize_filename(filename: str) -> str:

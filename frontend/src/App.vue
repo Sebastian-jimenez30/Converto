@@ -272,7 +272,7 @@ onBeforeUnmount(clearPolling);
           Upload one file, choose target format, and launch processing.
         </p>
         <p class="beta-note">
-          Current beta: only same-format processing is enabled (e.g., PDF to PDF).
+          Conversion engines are active for image, office, audio, and video formats.
         </p>
 
         <div

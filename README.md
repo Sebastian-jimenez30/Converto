@@ -62,6 +62,8 @@ Para este equipo (tu y yo), el flujo operativo es simple:
 
 ## Estado actual
 - Pipeline end-to-end de upload y procesamiento habilitado.
-- Worker actual usa convertidor placeholder (mantiene bytes), pero el flujo real de estados y storage ya funciona.
-- Siguiente paso: conversiones reales por tipo (imagenes, documentos, audio/video).
-
+- Conversiones reales activas con motor multi-engine:
+  - LibreOffice para documentos/ofimatica.
+  - FFmpeg para audio/video.
+  - Pillow para imagenes.
+- Pares no soportados devuelven error claro en API.

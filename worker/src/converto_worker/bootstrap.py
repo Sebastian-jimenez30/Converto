@@ -1,7 +1,7 @@
 from celery import Celery
 import time
 
-from converto_worker.adapters.converters.mock_converter import MockConverter
+from converto_worker.adapters.converters.multi_engine_converter import MultiEngineConverter
 from converto_worker.adapters.db.session import build_session_factory
 from converto_worker.adapters.storage.s3_storage import S3Storage
 from converto_worker.application.use_cases.process_conversion_use_case import (
@@ -15,7 +15,7 @@ celery_app = Celery("converto-worker")
 celery_app.conf.broker_url = settings.celery_broker_url
 celery_app.conf.result_backend = settings.celery_result_backend
 
-process_conversion_use_case = ProcessConversionUseCase(converter=MockConverter())
+process_conversion_use_case = ProcessConversionUseCase(converter=MultiEngineConverter())
 session_factory = build_session_factory(settings.database_url)
 s3_storage = S3Storage(
     endpoint=settings.s3_endpoint,
